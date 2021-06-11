@@ -9,10 +9,19 @@ var extract_array = [];
 //fs.writeFile(ouput_file_name, '<html>\n', function(){console.log('done')})
 
 
+function replaceAllBackSlash(targetStr){
+  var index=targetStr.indexOf("\\");
+  while(index >= 0){
+      targetStr=targetStr.replace("\\","");
+      index=targetStr.indexOf("\\");
+  }
+  return targetStr;
+}
+
 fs.createReadStream('testing.csv')
   .pipe(csv())
   .on('data', (row) => {
-    //var str = '';
+    var str = '';
     //console.log(row);
     //console.log(typeof(row));
     //console.log(row['field1']);
@@ -21,13 +30,18 @@ fs.createReadStream('testing.csv')
     //str+='<field1>'+row['field1']+'</field1>\n';
     //str+='<field2>'+row['field2']+'</field2>\n';
 
+    str +=row['field2'];
+    str = str.replace(":","");
+    str = str.replace("/","");
+    str = replaceAllBackSlash(str);
+    //console.log(str);
 
 
-
-    fs_write.appendFile('output_folder/'+ row['field2'] +'.html',row['field1'],(err) => {
+    fs_write.appendFile('output_folder/'+ str +'.html',row['field1'],(err) => {
         if (err) throw err;
         console.log('The "data to append" was appended to file!');
-      });        
+      });  
+           
   })
   .on('end', () => {
     console.log('CSV file successfully processed');
